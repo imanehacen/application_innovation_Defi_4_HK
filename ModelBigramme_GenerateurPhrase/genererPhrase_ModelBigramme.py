@@ -185,10 +185,11 @@ def modifySentence(phrase, filepath, fusionFile):
 
 
 
-
+nb_mot_phrase = 15
+mot_depart = "tu"
 
 
 fichier_fusion = readFile("fusion_final.txt")
-phrase = generateSentence("tu", 15, fichier_fusion)
+phrase = generateSentence(mot_depart, nb_mot_phrase, fichier_fusion)
 analyze(phrase)
 modifySentence(phrase, "result.mrf", fichier_fusion)
