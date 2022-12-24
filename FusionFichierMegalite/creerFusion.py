@@ -6,58 +6,17 @@ import os
 path = "/mnt/c/Users/imane/Downloads/MEGALITE_FRANCAIS_bi"
 
 
-def fusionner():
-    print("Lancement fusion fichier ...")
-    os.system("cat "+path+"/MEGALITE_FRANCAIS_bi/*/*.bi > lastFusion1/fusionBigramme.bi")
-
-def suppCarSpecial():
-    print("Suppression des caractères spécial ... ")
-    os.system("cat lastFusion1/fusionBigramme.bi | tr -d '°' > lastFusion1/fusionBigramme_without_special.bi")
-
-def suppLVide():
-    print("Suppression des lignes vides ....")
-    os.system(" sed -i '/^$/d' lastFusion1/fusionBigramme_without_special.bi ")
-
 def suppHeaderBigramm():
     print("Suppression du BIGRAM du debut ...")
-    os.system("sed '/BIGRAMAS/d' lastFusion1/fusionBigramme_without_special_v2.bi > lastFusion1/fusionBigramme_without_b.bi")
-
-def suppUtf8():
-    print("Suppression des caractères au format UTF-8....")
-    os.system("sed 's/Œ/oe/g; s/à/a/g; s/â/a/g; s/é/e/g; s/è/e/g; s/ê/e/g; s/î/i/g; s/ç/c/g; s/ô/o/g;  s/û/u/g; s/È/E/g; s/ë/e/g; s/ï/i/g;' lastFusion1/fusionBigramme_without_b.bi > lastFusion1/fusionBigramme_without_b_v2.bi")
-
-def suppWordLessThanThree():
-    print("Suppression des lignes de moins de 3 mots ....")
-    os.system("cat lastFusion1/fusionBigramme_without_b.bi | awk 'NF==3' > lastFusion1/fusion_v1.bi")
+    os.system("sed '/BIGRAMAS/d' lastFusion1/fusionBigramme.bi > lastFusion1/fusionBigramme_without_b.txt")
 
 
-def creationCSVFile():
-    print("Creation du fichier csv avec en-tête : mot1, mot2, occurence.....")
-    os.system("echo 'mot1,mot2,occurence' > lastFusion1/fusion.txt")
-
-def miseSeparatorCSV():
-    print("Ajout des séparateurs ',' ....")
-    os.system("sed -e 's/\s\+/,/g' lastFusion1/fusion_v1.bi > lastFusion1/fusion_v1.txt")
-
-
-def fusionBigrammUnique():
-    print("Procedure de fusion des bigrammes uniques ... ")
-    os.system("datamash -t, -s -g 1,2 sum 3 < lastFusion1/fusion_v1.txt >> lastFusion1/fusion.txt")
-
-
-
-# # fusionner()
-# suppCarSpecial()
-# suppLVide()
-# suppHeaderBigramm()
-# # suppUtf8()
-# suppWordLessThanThree()
-# creationCSVFile()
-# miseSeparatorCSV()
-# fusionBigrammUnique()
-
-
-
+def split2():
+    os.system("split -n2 lastFusion1/fusionBigramme_without_b.txt")
+    os.system("mv xaa fil1.txt")
+    os.system("mv xaa fil2.txt")
+    os.system("cp fil1.txt lastFusion1/")
+    os.system("cp fil2.txt lastFusion1/")
 
 def fusionBigram(): 
     print("Lancement fusion fichier ...")
@@ -117,11 +76,49 @@ def fusionGroup(data):
 # group1.to_csv('lastFusion1/fusion_1.txt', index=False)
 # group2.to_csv('lastFusion1/fusion_2.txt', index=False)
 
-print("lancement fusion file ... ")
-# fusionnerTwoPart()
-fusion = fusionFinal()
-print("sauvegarde ... ")
-fichier_total = fusionGroup(fusion)
-fichier_total.to_csv('lastFusion1/fusion_final.txt', index=False)
+# print("lancement fusion file ... ")
+# # fusionnerTwoPart()
+# fusion = fusionFinal()
+# print("sauvegarde ... ")
+# fichier_total = fusionGroup(fusion)
+# fichier_total.to_csv('lastFusion1/fusion_final.txt', index=False)
 
-# fusionBigram()
+# # fusionBigram()
+
+
+
+####################################################################################################
+                            # FUSION FICHIER 
+####################################################################################################
+
+
+# on fusionne
+fusionBigram() 
+
+# on enleve les en-tête /BIGRAMS/
+suppHeaderBigramm()
+
+# on split en 2 
+split2()
+
+# on lit nos deux fichiers 
+data1, data2 = ouvrirFichier()
+
+# on enleve les doublons 
+group1,group2 = groupBigramm(data1,data2)
+
+# on les save 
+group1.to_csv('lastFusion1/fusion_1.txt', index=False)
+group2.to_csv('lastFusion1/fusion_2.txt', index=False)
+
+# on regroupe tout dans un fichier
+fusionnerTwoPart()
+
+# on lit le nouveau tableua fusionner 
+fusion = fusionFinal()
+
+# on regroupe encore en enlevant les doublons 
+fichier_total = fusionGroup(fusion)
+
+# on sauvegarde le fichier final 
+fichier_total.to_csv('lastFusion1/fusion_final.txt', index=False)
