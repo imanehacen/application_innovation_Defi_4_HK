@@ -351,6 +351,8 @@ def getListMotCode(code_mot, mot_a_remplacer, data_embeding, code_associative, c
     print(word_max)
     new_phrase = phrase.split(' ')
     for i in range(0,len(mot_a_remplacer)):
+        if( mot_a_remplacer[i][len(mot_a_remplacer[i])-1]== "," or  mot_a_remplacer[i][len(mot_a_remplacer[i])-1]== "." ):
+            mot_a_remplacer[i]= mot_a_remplacer[i][:-1]
         inde = new_phrase.index(mot_a_remplacer[i])
         print("inde : ", inde)
         print("i : ", i)
@@ -389,6 +391,8 @@ def correctionGrammaire(phrase):
                     nvll.append(newWord)
             else:
                 nvll.append(phraseWord[i])
+        else:
+            nvll.append(phraseWord[i])
     ligne = miseEnPhrase(nvll)
     return ligne 
 
