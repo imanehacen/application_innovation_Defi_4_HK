@@ -8,6 +8,18 @@ from numpy.linalg import norm
 import os
 
 
+def lirePhrase():
+    # lire phrase
+    sentence  = open("/mnt/c/Users/imane/OneDrive/Bureau/appInn/GenerateurPhrase/genererPhraseEtape2/sentence.txt", "r")
+    
+    # lire le fichier sentence
+    sentence = sentence.read()
+    lines = sentence.split('\n')
+    return lines[0].lower()
+
+
+#####################################################################################################################
+
 def getVector():
 
     # ouvrire le flux avec le fichier embedding 
@@ -265,9 +277,13 @@ def recupListMotByCode(code, data):
 
 def getListMotCode(code_mot, mot_a_remplacer, data_embeding, code_associative, context, context_word, phrase):
 
+    print("=== ",mot_a_remplacer )
     mot=[]
     code=[]
     for i in range (len(mot_a_remplacer)):
+        print(" - ", mot_a_remplacer[i] )
+        if( mot_a_remplacer[i][len(mot_a_remplacer[i])-1]== "," or  mot_a_remplacer[i][len(mot_a_remplacer[i])-1]== "." ):
+            mot_a_remplacer[i]= mot_a_remplacer[i][:-1]
         mot.append(code_mot[code_mot['mots']==mot_a_remplacer[i]]['mots'].values[0])
         code.append(code_mot[code_mot['mots']==mot_a_remplacer[i]]['code'].values[0])
         # print(code_mot[code_mot['mots']==mot_a_remplacer[i]])
@@ -356,23 +372,40 @@ def getListMotCode(code_mot, mot_a_remplacer, data_embeding, code_associative, c
 #####################################################################################################################
 
 def correctionGrammaire(phrase):
-    dict = [ "le", "la", "de", "je", "me", "te", "se", "ce", "ne", "que"]
+    dict = [ "le", "la", "de", "je", "me", "te", "se", "ce", "ne", "que", "qu"]
     phraseWord = phrase.split(' ')
     print(phraseWord)
     nvll=[]
-    # for i in range (0, len(phraseWord)):
+    for i in range (0, len(phraseWord)):
         # print( " word i ", phraseWord[i])
-       
-        # if( (i+1) < len(phraseWord)-1):
-        #     print(" first ", phraseWord[i+1][0])
-        #     print(" last ", phraseWord[i][len(phraseWord[i])-1])
-        #     if ( phraseWord[i+1][0] == phraseWord[i][len(phraseWord[i])-1] ):
-        #         print("premier - ",phraseWord[i][len(phraseWord[i])-1] , " --- --- - ", phraseWord[i], " --- ", phraseWord[i+1] )
-        #         print(" - suivant ",phraseWord[i+1][0])
-        #         if (phraseWord[i]  )
+        if( (i+1) < len(phraseWord)-1):
+            print(" first ", phraseWord[i+1][0])
+            print(" last ", phraseWord[i][len(phraseWord[i])-1])
+            if ( phraseWord[i+1][0] == phraseWord[i][len(phraseWord[i])-1] ):
+                print("premier - ",phraseWord[i][len(phraseWord[i])-1] , " --- --- - ", phraseWord[i], " --- ", phraseWord[i+1] )
+                print(" - suivant ",phraseWord[i+1][0])
+                if ( phraseWord[i] in dict):
+                    newWord= phraseWord[i][:-1]+ "'"
+                    nvll.append(newWord)
+            else:
+                nvll.append(phraseWord[i])
+    ligne = miseEnPhrase(nvll)
+    return ligne 
+
+        
 
 
 
+
+#####################################################################################################################
+
+def miseEnPhrase(phra):
+    s=''
+    for i in range(0, len(phra)):
+         s=s+phra[i]+" "
+    s = s+ "."
+    s = s.capitalize()
+    return s
 
 
 #####################################################################################################################
@@ -402,7 +435,8 @@ print(' recuperation antidictionnaire ....')
 # je recupere les mots de l'antidictionnaire
 antidictionnaire = lireAntidictionnaire()
 
-phrase = "tu as dit il avait pas de la tête et le monde est ce qu elle était"
+phrase = lirePhrase()
+print(" phrase : ", phrase)
 # ['Regrette', 'allégresse', 'jubiler']
 #  mot à remplacer :  ['vais', 'porte', 'voir']
 # nouvelle phrase : je Regrette par la allégresse et elle jubiler demain
@@ -432,7 +466,7 @@ code_mots_associative = recupListMot()
 # print(" -?  --", np.sqrt(sum_sq))
 
 print(" recuperation des coordonnées du context ... ")
-context_word ='peur'
+context_word ='joie'
 # recuperer les coords du context 
 coordContext = getVectorByContext(context_word)
 
@@ -441,7 +475,12 @@ print("recuperation des nouveaux mots ... ")
 phr = getListMotCode(code_mot, mot_a_remplacer, data_embedding, code_mots_associative, coordContext, context_word, phrase)
 
 print( " phrase de debut ;;;; \n", phrase)
-print( " phrase TRANSFORMER  ;;;; \n", phr)
+
+newPhrase = miseEnPhrase(phr)
+print(" new phrase avant correction ", newPhrase)
+phraseGram = correctionGrammaire(newPhrase)
+print( " phrase TRANSFORMER  ;;;; \n",phraseGram)
+
 
 
 
