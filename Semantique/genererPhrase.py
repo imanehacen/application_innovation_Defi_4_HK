@@ -10,7 +10,7 @@ import os
 
 def lirePhrase():
     # lire phrase
-    sentence  = open("sentence.txt", "r")
+    sentence  = open("../ModelBigramme_GenerateurPhrase/sentence.txt", "r")
     
     # lire le fichier sentence
     sentence = sentence.read()
