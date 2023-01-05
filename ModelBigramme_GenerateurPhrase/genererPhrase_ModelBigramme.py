@@ -174,7 +174,7 @@ def modifySentence(phrase, filepath, fusionFile):
                         infoSentence.append(data[0])
                 lastWord = infoSentence[len(infoSentence)-1][0]+infoSentence[len(infoSentence)-1][1]
                 splitSentence=phrase.split()
-                os.system("echo '"+phrase+"' > result.txt")
+                os.system("echo '"+phrase+"' > sentence.txt")
         
     
     os.system("cat result.txt")
