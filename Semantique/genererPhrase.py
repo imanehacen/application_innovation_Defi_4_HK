@@ -10,7 +10,7 @@ import os
 
 def lirePhrase():
     # lire phrase
-    sentence  = open("/mnt/c/Users/imane/OneDrive/Bureau/appInn/GenerateurPhrase/genererPhraseEtape2/sentence.txt", "r")
+    sentence  = open("sentence.txt", "r")
     
     # lire le fichier sentence
     sentence = sentence.read()
@@ -150,6 +150,7 @@ def recupererCodeMot(phrase):
 
 #####################################################################################################################
 
+from math import dist
 # 
 # issu de : https://stackoverflow.com/questions/2827393/angles-between-two-n-dimensional-vectors-in-python
 # 
@@ -157,8 +158,9 @@ def getAngle(u,v):
     # u = array(u)
     # v =  array(v)
     # c = dot(u,v)/norm(u)/norm(v) # -> cosine of the angle
-    sum_sq = np.sum(np.square(np.array(u) - np.array(v)))
-    return np.sqrt(sum_sq)
+   # sum_sq = np.sum(np.square(np.array(u) - np.array(v)))
+    #return np.sqrt(sum_sq)
+    return dist(u, v)
     # angle = arccos(clip(c, -1, 1)) # if you really want the angle
 
 
@@ -344,6 +346,8 @@ def getListMotCode(code_mot, mot_a_remplacer, data_embeding, code_associative, c
                     dist_max = dist
                     mot_replace =wo
                     print(' mot ', wo, " dist : ", dist )
+                if(dist < 2.51 ):
+                    break
                 
         print(" " , mot_a_remplacer[j], " -> ", mot_replace)
         word_max.append(mot_replace)
@@ -351,13 +355,14 @@ def getListMotCode(code_mot, mot_a_remplacer, data_embeding, code_associative, c
     print(word_max)
     new_phrase = phrase.split(' ')
     for i in range(0,len(mot_a_remplacer)):
+        print(mot_a_remplacer[i][len(mot_a_remplacer[i])-1])
         if( mot_a_remplacer[i][len(mot_a_remplacer[i])-1]== "," or  mot_a_remplacer[i][len(mot_a_remplacer[i])-1]== "." ):
             mot_a_remplacer[i]= mot_a_remplacer[i][:-1]
         inde = new_phrase.index(mot_a_remplacer[i])
-        print("inde : ", inde)
-        print("i : ", i)
-        print("word phra ", word_max)
-        print(" phra ", new_phrase)
+        # print("inde : ", inde)
+        # print("i : ", i)
+        # print("word phra ", word_max)
+        # print(" phra ", new_phrase)
         new_phrase[inde]=word_max[i]
 
     new_phrases = ''.join(new_phrase)
@@ -381,16 +386,20 @@ def correctionGrammaire(phrase):
     for i in range (0, len(phraseWord)):
         # print( " word i ", phraseWord[i])
         if( (i+1) < len(phraseWord)-1):
-            print(" first ", phraseWord[i+1][0])
-            print(" last ", phraseWord[i][len(phraseWord[i])-1])
-            if ( phraseWord[i+1][0] == phraseWord[i][len(phraseWord[i])-1] ):
-                print("premier - ",phraseWord[i][len(phraseWord[i])-1] , " --- --- - ", phraseWord[i], " --- ", phraseWord[i+1] )
-                print(" - suivant ",phraseWord[i+1][0])
+            # print(" first ", phraseWord[i+1][0])
+            # print(" last ", phraseWord[i][len(phraseWord[i])-1])
+            if ( phraseWord[i+1][0] == phraseWord[i][len(phraseWord[i])-1]) and  ( phraseWord[i] in dict ):
+                # print("premier - ",phraseWord[i][len(phraseWord[i])-1] , " --- --- - ", phraseWord[i], " --- ", phraseWord[i+1] )
+                # print(" - suivant ",phraseWord[i+1][0])
                 if ( phraseWord[i] in dict):
                     newWord= phraseWord[i][:-1]+ "'"
                     nvll.append(newWord)
             else:
-                nvll.append(phraseWord[i])
+                if(phraseWord[i]=="qu" ):
+                    newWord= phraseWord[i]+"'"+phraseWord[i+1]
+                    nvll.append(newWord)
+                elif ( phraseWord[i-1]!="qu"): 
+                    nvll.append(phraseWord[i])
         else:
             nvll.append(phraseWord[i])
     ligne = miseEnPhrase(nvll)
@@ -406,7 +415,9 @@ def correctionGrammaire(phrase):
 def miseEnPhrase(phra):
     s=''
     for i in range(0, len(phra)):
-         s=s+phra[i]+" "
+        s=s+phra[i]+" "
+
+
     s = s+ "."
     s = s.capitalize()
     return s
@@ -470,7 +481,7 @@ code_mots_associative = recupListMot()
 # print(" -?  --", np.sqrt(sum_sq))
 
 print(" recuperation des coordonnées du context ... ")
-context_word ='joie'
+context_word ='peur'
 # recuperer les coords du context 
 coordContext = getVectorByContext(context_word)
 
@@ -478,12 +489,12 @@ print("recuperation des nouveaux mots ... ")
 # recuperer les mots associé au code du mot 
 phr = getListMotCode(code_mot, mot_a_remplacer, data_embedding, code_mots_associative, coordContext, context_word, phrase)
 
-print( " phrase de debut ;;;; \n", phrase)
+print( " phrase de debut --- >  \n", phrase)
 
 newPhrase = miseEnPhrase(phr)
 print(" new phrase avant correction ", newPhrase)
 phraseGram = correctionGrammaire(newPhrase)
-print( " phrase TRANSFORMER  ;;;; \n",phraseGram)
+print( " phrase TRANSFORMER  ---- >  \n",phraseGram)
 
 
 
