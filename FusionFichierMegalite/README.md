@@ -1,4 +1,4 @@
-ce fichier contient l'ensemble des méthodes permettant de faire fusionner l'ensemble des fichiers contenus dans le megalite.
+Ce fichier contient l'ensemble des méthodes permettant de faire fusionner l'ensemble des fichiers contenus dans le megalite.
 On trouve alors les méthodes suivantes:
 - " fusionBigramm() " : Cette méthode permet de fusionner l'ensemble des fichiers du megalite, mais les doublons et potentiel erreurs
 ne sont pas corrigés.
